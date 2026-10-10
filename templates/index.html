@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>〔章名〕｜讀書報告</title>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@1,6..72,400&family=DM+Mono&family=Noto+Serif+TC:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+/* index page: same theme as the slides */
+:root{--paper:#F2EDE3;--ink:#1E2A44;--accent:#C2552D}
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:var(--paper);color:var(--ink);font:400 17px/1.8 "Noto Serif TC",serif;display:flex;flex-direction:column;justify-content:center;padding:48px clamp(16px,6vw,96px)}
+.wrap{max-width:1100px;width:100%;margin:0 auto;border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);padding:clamp(32px,6vw,64px) 0}
+.k{font:13px "DM Mono",monospace;letter-spacing:.14em;color:var(--accent)}
+.m{font:13px "DM Mono",monospace}
+.en{font:italic 400 clamp(32px,5.5vw,72px)/1 Newsreader,serif;margin:16px 0 6px}
+h1{font:900 clamp(52px,10vw,124px)/1.1 "Noto Serif TC",serif}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;margin-top:40px}
+a.card{display:block;text-decoration:none;color:inherit;border:2px solid var(--ink);padding:24px;transition:background .2s,color .2s}
+a.card:hover,a.card:focus-visible{background:var(--ink);color:var(--paper);outline:none}
+a.card h2{font:700 26px/1.4 "Noto Serif TC",serif;margin:8px 0 6px}
+.who{margin-top:34px;display:flex;flex-wrap:wrap;gap:8px 32px}
+.who span{white-space:nowrap}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="k">CH.〔N〕</div>
+  <div class="en">〔English title〕</div>
+  <h1>〔章名〕</h1>
+  <p class="m" style="margin-top:12px">〔作者〕《〔書名〕》第〔N〕章 · 頁 〔x–y〕</p>
+  <div class="cards">
+    <a class="card" href="slides.html"><span class="m">01 · SLIDES</span><h2>上台版簡報</h2><p>方向鍵或滑動翻頁</p></a>
+    <a class="card" href="detail.html"><span class="m">02 · DETAIL</span><h2>詳細版與 Critical Form</h2><p>一頁式網頁，可切換報告內容與 Critical Form</p></a>
+  </div>
+  <div class="who"><span class="k">PRESENTERS</span><span><span class="m">〔學號〕</span> 〔姓名〕</span><span><span class="m">〔學號〕</span> 〔姓名〕</span></div>
+</main>
+</body>
+</html>

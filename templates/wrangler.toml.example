@@ -1,0 +1,8 @@
+# Copy to wrangler.toml in the chapter folder (next to site/ and functions/)
+name = "<project-name>"                 # e.g. creativity-ch5 → https://creativity-ch5.pages.dev
+pages_build_output_dir = "./site"
+compatibility_date = "2025-06-01"
+
+[[kv_namespaces]]
+binding = "EDITS"
+id = "<id from: wrangler kv namespace create <project-name>-edits>"

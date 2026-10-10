@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>〔章名〕｜詳細版</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@1,6..72,400&family=DM+Mono:wght@400;500&family=Noto+Serif+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+/* ===========================================
+   THEME — use the same colours/fonts as the slides
+   =========================================== */
+:root{
+  --paper:#F2EDE3; --ink:#1E2A44; --accent:#C2552D; --faint:rgba(30,42,68,.16);
+  --f-cjk:"Noto Serif TC",serif; --f-en:"Newsreader","Noto Serif TC",serif; --f-mono:"DM Mono",ui-monospace,monospace;
+  --gutter:clamp(16px,5vw,80px); --max:1200px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{background:var(--paper);color:var(--ink);font:400 17px/1.85 var(--f-cjk);-webkit-font-smoothing:antialiased}
+b,strong{font-weight:700}
+a{color:inherit}
+
+/* sticky bar: ← 回首頁 + 編輯 (always visible) on the left, tabs on the right */
+.bar{position:sticky;top:0;z-index:50;background:var(--paper);border-bottom:2px solid var(--ink)}
+.bar-in{max-width:var(--max);margin:0 auto;padding:0 var(--gutter);display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:62px}
+.bar-left{display:flex;align-items:center;gap:14px;flex:none}
+.brand{font:400 13px var(--f-mono);letter-spacing:.1em;white-space:nowrap;opacity:.7}
+.home{font:500 13px var(--f-mono);letter-spacing:.06em;text-decoration:none;border:1.5px solid var(--ink);padding:7px 12px;white-space:nowrap}
+.home:hover,.home:focus-visible,.home.active{background:var(--ink);color:var(--paper);outline:none}
+.tabs{display:flex}
+.tab{appearance:none;border:0;background:none;color:inherit;cursor:pointer;font:700 16px var(--f-cjk);padding:0 22px;height:62px;border-bottom:4px solid transparent}
+.tab[aria-selected="true"]{border-bottom-color:var(--accent)}
+.tab:focus-visible{outline:2px solid var(--accent);outline-offset:-6px}
+@media (max-width:1100px){.brand{display:none}}
+@media (max-width:640px){.bar-in{padding:0 0 0 10px}.tabs{flex:1}.tab{flex:1;font-size:14px;padding:0 6px}.bar-left{gap:8px}.home{padding:6px 9px;font-size:12px}}
+
+main{max-width:var(--max);margin:0 auto;padding:0 var(--gutter) 120px}
+.panel[hidden]{display:none}
+.kicker{font:500 13px var(--f-mono);letter-spacing:.14em;color:var(--accent)}
+.mono{font:400 13px var(--f-mono);letter-spacing:.06em}
+
+.hero{padding:clamp(56px,9vw,110px) 0 clamp(40px,6vw,64px);border-bottom:2px solid var(--ink)}
+.hero .en{font:italic 400 clamp(36px,6vw,80px)/1 var(--f-en);margin:16px 0 6px}
+.hero h1{font:900 clamp(56px,11vw,140px)/1.08 var(--f-cjk)}
+.hero .lede{font:400 clamp(18px,2.1vw,24px)/1.75 var(--f-cjk);margin-top:18px;max-width:780px}
+.presenters{margin-top:26px;display:flex;flex-wrap:wrap;gap:8px 32px;align-items:baseline}
+.presenters span{white-space:nowrap}
+
+.sec{padding:clamp(48px,7vw,84px) 0 0}
+.sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;border-bottom:2px solid var(--ink);padding-bottom:14px;margin-bottom:28px}
+.sec-head h2{font:700 clamp(27px,4vw,42px)/1.25 var(--f-cjk)}
+.sec-head .n{font:500 14px var(--f-mono);display:block;margin-bottom:8px;color:var(--accent)}
+.cols{display:grid;gap:clamp(24px,4vw,48px);grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.col{border-top:5px solid var(--accent);padding-top:18px}
+.col .mono{display:block;margin-bottom:6px}
+.col h3{font:700 22px/1.45 var(--f-cjk);margin-bottom:8px}
+.quote{font:900 clamp(25px,3.8vw,40px)/1.45 var(--f-cjk);max-width:980px}
+.ledger{width:100%;border-collapse:collapse}
+.ledger th{font:500 12px var(--f-mono);letter-spacing:.12em;text-align:left;padding:0 16px 10px 0;border-bottom:2px solid var(--ink)}
+.ledger td{vertical-align:top;padding:16px 16px 16px 0;border-bottom:1px solid var(--faint)}
+.ledger td.name{font:700 19px/1.45 var(--f-cjk);width:180px}
+@media (max-width:760px){
+  .ledger thead{display:none}.ledger tr{display:block;padding:14px 0;border-bottom:1px solid var(--faint)}
+  .ledger td{display:block;border:0;padding:2px 0;width:auto!important}
+  .ledger td[data-label]::before{content:attr(data-label);display:block;font:500 11px var(--f-mono);letter-spacing:.12em;opacity:.6;margin-top:8px}
+}
+.ask{border:2px solid var(--ink);padding:clamp(24px,4vw,44px)}
+
+/* Critical Form */
+.form-head{padding:clamp(48px,7vw,84px) 0 26px;border-bottom:2px solid var(--ink)}
+.form-head h1{font:italic 400 clamp(34px,5.4vw,60px)/1.05 var(--f-en);margin:14px 0 18px}
+.toc{display:flex;flex-wrap:wrap;gap:8px 0;margin-top:20px}
+.toc a{font:400 13px var(--f-mono);text-decoration:none;padding:4px 14px 4px 0;margin-right:14px;border-right:1px solid var(--faint)}
+.fsec{display:grid;grid-template-columns:210px 1fr;gap:clamp(16px,3vw,48px);padding:34px 0;border-bottom:1px solid var(--faint)}
+.fsec .label .n{font:500 14px var(--f-mono);display:block;margin-bottom:6px;color:var(--accent)}
+.fsec .label h2{font:italic 400 26px/1.15 var(--f-en)}
+.field{margin-bottom:22px}.field:last-child{margin-bottom:0}
+.field h3{font:500 12px var(--f-mono);letter-spacing:.14em;margin-bottom:6px;text-transform:uppercase}
+@media (max-width:760px){.fsec{grid-template-columns:1fr;gap:12px}}
+
+footer{max-width:var(--max);margin:0 auto;padding:22px var(--gutter) 34px;border-top:2px solid var(--ink);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.rv{opacity:0;transform:translateY(16px);transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1)}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.rv{opacity:1;transform:none;transition:none}}
+@media print{.bar{position:static}.panel[hidden]{display:block}.rv{opacity:1;transform:none}}
+</style>
+</head>
+<body data-page="detail">
+
+<header class="bar">
+  <div class="bar-in">
+    <div class="bar-left"><a class="home" href="index.html">&larr;&nbsp;回首頁</a><span class="brand">CH.〔N〕</span></div>
+    <div class="tabs" role="tablist" aria-label="切換內容">
+      <button class="tab" role="tab" id="tab-report" aria-controls="report" aria-selected="true">報告內容</button>
+      <button class="tab" role="tab" id="tab-form" aria-controls="form" aria-selected="false" tabindex="-1">Critical Form</button>
+    </div>
+  </div>
+</header>
+
+<main>
+<!-- ===== TAB 1 — 報告內容: the full version of the slides ===== -->
+<div class="panel" id="report" role="tabpanel" aria-labelledby="tab-report">
+  <section class="hero">
+    <div class="kicker">CH.〔N〕 · 詳細版</div>
+    <div class="en">〔English title〕</div>
+    <h1>〔章名〕</h1>
+    <p class="lede">〔一句話副標〕</p>
+    <p class="mono" style="margin-top:12px">〔作者〕《〔書名〕》第〔N〕章 · 頁 〔x–y〕</p>
+    <div class="presenters"><span class="kicker">PRESENTERS</span><span><span class="mono">〔學號〕</span>&nbsp;〔姓名〕</span><span><span class="mono">〔學號〕</span>&nbsp;〔姓名〕</span></div>
+  </section>
+
+  <section class="sec rv" id="overview">
+    <div class="sec-head"><h2><span class="n">01</span>本章一覽：問題、方法、結論</h2><span class="mono">OVERVIEW</span></div>
+    <div class="cols">
+      <div class="col"><span class="mono">Q · 問題</span><h3>〔作者的問題〕</h3><p>〔說明〕</p></div>
+      <div class="col"><span class="mono">M · 方法</span><h3>〔研究方法〕</h3><p>〔說明〕</p></div>
+      <div class="col"><span class="mono">A · 結論</span><h3>〔結論〕</h3><p>〔說明〕</p></div>
+    </div>
+  </section>
+
+  <section class="sec rv" id="content">
+    <div class="sec-head"><h2><span class="n">02</span>〔主要內容〕</h2><span class="mono">pp.〔x–y〕</span></div>
+    <table class="ledger">
+      <thead><tr><th>項目</th><th>書中說法</th><th>例子</th></tr></thead>
+      <tbody>
+        <tr><td class="name">〔項目〕</td><td data-label="書中說法">〔說明〕</td><td data-label="例子">〔受訪者或案例〕</td></tr>
+        <tr><td class="name">〔項目〕</td><td data-label="書中說法">〔說明〕</td><td data-label="例子">〔受訪者或案例〕</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="sec rv" id="conclusion">
+    <div class="sec-head"><h2><span class="n">03</span>結論</h2><span class="mono">p.〔x〕</span></div>
+    <p class="quote">〔作者的結論〕</p>
+  </section>
+
+  <section class="sec rv" id="context">
+    <div class="sec-head"><h2><span class="n">04</span>放到台灣、亞洲，還成立嗎？</h2><span class="mono">IN CONTEXT</span></div>
+    <div class="cols">
+      <div class="col"><span class="mono">成立的部分</span><h3>〔標題〕</h3><p>〔說明〕</p></div>
+      <div class="col"><span class="mono">需要修正的部分</span><h3>〔標題〕</h3><p>〔說明〕</p></div>
+    </div>
+  </section>
+
+  <section class="sec rv" id="discussion">
+    <div class="sec-head"><h2><span class="n">05</span>留給全班的問題</h2><span class="mono">FOR DISCUSSION</span></div>
+    <div class="ask"><span class="kicker">ONE QUESTION FOR THE CLASS</span><p class="quote" style="margin-top:10px">〔討論問題〕</p></div>
+  </section>
+</div>
+
+<!-- ===== TAB 2 — Critical Form: the .docx text verbatim ===== -->
+<div class="panel" id="form" role="tabpanel" aria-labelledby="tab-form" hidden>
+  <section class="form-head">
+    <span class="kicker">READING FORM</span>
+    <h1>The Critical Form for Reading Papers</h1>
+    <div><span class="kicker">STUDENT NUMBER AND NAME</span>&nbsp;&nbsp;<span class="mono">〔學號〕</span>&nbsp;〔姓名〕</div>
+    <nav class="toc" aria-label="目錄"><a href="#f1">01 Title/Author(s)</a><a href="#f2">02 Scope &amp; Background</a><a href="#f3">03 Problem &amp; Objectives</a><a href="#f4">04 Methodology &amp; Steps</a><a href="#f5">05 Findings</a><a href="#f6">06 Significance</a><a href="#f7">07 Questions</a></nav>
+  </section>
+  <section class="fsec rv" id="f1"><div class="label"><span class="n">01</span><h2>Title / Author(s)</h2></div><div><div class="field"><h3>Title</h3><p>〔…〕</p></div><div class="field"><h3>Author(s)</h3><p>〔…〕</p></div></div></section>
+  <section class="fsec rv" id="f2"><div class="label"><span class="n">02</span><h2>Scope of Research and Major Background</h2></div><div><div class="field"><h3>Scope</h3><p>〔…〕</p></div><div class="field"><h3>Background</h3><p>〔…〕</p></div></div></section>
+  <section class="fsec rv" id="f3"><div class="label"><span class="n">03</span><h2>Research Problem(s) and Objectives</h2></div><div><div class="field"><h3>Research Problem</h3><p>〔…〕</p></div><div class="field"><h3>Purpose</h3><p>〔…〕</p></div><div class="field"><h3>Objectives</h3><p>〔…〕</p></div></div></section>
+  <section class="fsec rv" id="f4"><div class="label"><span class="n">04</span><h2>Methodology and Steps</h2></div><div><div class="field"><h3>Methodology</h3><p>〔…〕</p></div><div class="field"><h3>Steps</h3><p>〔…〕</p></div></div></section>
+  <section class="fsec rv" id="f5"><div class="label"><span class="n">05</span><h2>Findings and related Supports</h2></div><div><p>〔…〕</p></div></section>
+  <section class="fsec rv" id="f6"><div class="label"><span class="n">06</span><h2>Significance and Learnings</h2></div><div><p>〔…〕</p></div></section>
+  <section class="fsec rv" id="f7"><div class="label"><span class="n">07</span><h2>Questions?</h2></div><div><div class="ask"><p class="quote" style="margin:0">〔…〕</p></div></div></section>
+</div>
+</main>
+
+<footer><span class="mono">〔作者〕《〔書名〕》第〔N〕章</span><span class="mono">〔學號〕 〔姓名〕 · 〔學號〕 〔姓名〕</span></footer>
+
+<script>
+/* tabs: click / ← →; #form opens the Critical Form tab */
+const tabs=[...document.querySelectorAll('[role=tab]')];
+function select(t,push){
+  tabs.forEach(x=>{const on=x===t;x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;document.getElementById(x.getAttribute('aria-controls')).hidden=!on});
+  if(push)history.replaceState(null,'',t.id==='tab-form'?'#form':'#report');
+  window.scrollTo({top:0});revealCheck();
+}
+tabs.forEach((t,i)=>{t.addEventListener('click',()=>select(t,true));t.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){const n=tabs[(i+(e.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length];n.focus();select(n,true)}})});
+function fromHash(){const h=location.hash.slice(1);if(h==='form'||/^f\d$/.test(h)){select(tabs[1]);if(h!=='form')document.getElementById(h)?.scrollIntoView()}}
+addEventListener('hashchange',fromHash);
+/* scroll reveal */
+const io='IntersectionObserver' in window?new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.06}):null;
+function revealCheck(){document.querySelectorAll('.rv:not(.in)').forEach(el=>io?io.observe(el):el.classList.add('in'))}
+revealCheck();fromHash();
+</script>
+<script>
+/* ===========================================
+   CLOUD EDITOR — edits are saved to Cloudflare KV (/api/edits)
+   so every visitor sees the latest text.
+   · E key, or hover the top-left corner and click EDIT (detail pages: the 編輯 button in the top bar)
+   · Anyone can edit (no password); the server keeps the last 30 versions for rollback
+   · Each change autosaves about 1 s after you stop typing
+   · Esc (or the EDIT button) leaves edit mode; Cmd/Ctrl+S downloads a backup copy
+   <body data-page="slides|detail"> decides which document is stored.
+   <meta name="build"> (written by stamp.py) ties saved edits to one page version:
+   edits from another version are ignored, and a stale tab is not allowed to save.
+   =========================================== */
+class Editor{
+  constructor(){
+    this.page=document.body.dataset.page||'slides';
+    this.api='/api/edits?page='+encodeURIComponent(this.page);
+    this.on=false;this.timer=null;this.pw=null;
+    this.build=(document.querySelector('meta[name=build]')||{}).content||'';
+    try{this.pw=sessionStorage.getItem('edit-pw')}catch(e){}
+    this.collect();
+    this.ui();
+    this.load();
+  }
+  /* editable text blocks, keyed "group:index" so keys stay stable per slide/section */
+  collect(){
+    const SEL='h1,h2,h3,p,li,td,th,.pair,.who,.name,.kicker,.kicker-zh,.en,.en-display,.lede,.src,.quote,.ledger .r>div,.presenters>span,.mono,.num,.era,.what,.why,.small,.body';
+    const groups=document.querySelectorAll('.slide, main section');
+    this.map=new Map();
+    groups.forEach((g,gi)=>{
+      const gk=g.id||((g.classList.contains('slide')?'s':'g')+gi);
+      let els=[...g.querySelectorAll(SEL)].filter(el=>!el.closest('.glitch,.qr,.band,.layers,[data-noedit]'));
+      els=els.filter(el=>!els.some(o=>o!==el&&o.contains(el)));
+      els.forEach((el,i)=>{const k=gk+':'+i;el.dataset.eid=k;this.map.set(k,el)});
+    });
+    this.orig=new Map([...this.map].map(([k,el])=>[k,el.innerHTML]));
+  }
+  ui(){
+    const st=document.createElement('style');
+    st.textContent=`
+.edit-hotzone{position:fixed;top:0;left:0;width:90px;height:90px;z-index:10000;cursor:pointer}
+.edit-toggle{position:fixed;top:16px;left:16px;z-index:10001;opacity:0;pointer-events:none;transition:opacity .3s;cursor:pointer;
+  font:500 13px ui-monospace,monospace;letter-spacing:.1em;background:var(--paper,#fff);color:var(--ink,var(--soil,#222));border:1.5px solid var(--ink,var(--soil,#222));padding:8px 12px}
+.edit-toggle.show,.edit-toggle.active{opacity:1;pointer-events:auto}
+.edit-toggle.active{background:var(--ink,var(--soil,#222));color:var(--paper,#fff)}
+.edit-status{position:fixed;top:22px;left:110px;z-index:10001;font:500 12px ui-monospace,monospace;letter-spacing:.06em;padding:5px 10px;
+  background:var(--paper,#fff);color:var(--ink,var(--soil,#222));border:1px solid currentColor;display:none}
+body.editing .edit-status{display:block}
+body.editing [contenteditable]{outline:1px dashed var(--ink-soft,var(--clay,#c00));outline-offset:4px;cursor:text}
+body[data-page=detail] .edit-hotzone{display:none}
+.bar-left .edit-toggle{position:static;opacity:1;pointer-events:auto;font:500 13px var(--f-mono,monospace);letter-spacing:.06em;padding:7px 12px;background:transparent;color:inherit;border:1.5px solid currentColor;white-space:nowrap}
+body[data-page=detail] .edit-status{top:auto;bottom:22px}
+@media (hover:none){.edit-toggle{opacity:.5;pointer-events:auto}}`;
+    document.head.appendChild(st);
+    let t=document.getElementById('editToggle'),z=document.querySelector('.edit-hotzone');
+    if(!z){z=document.createElement('div');z.className='edit-hotzone';document.body.appendChild(z)}
+    if(!t){t=document.createElement('button');t.id='editToggle';t.className='edit-toggle';t.textContent='EDIT';t.title='編輯模式 (E)';document.body.appendChild(t)}
+    const bar=document.querySelector('.bar-left');
+    if(bar&&document.body.dataset.page==='detail'){t.className='edit-toggle home';t.textContent='編輯';bar.insertBefore(t,bar.querySelector('.brand'))}
+    this.status=document.createElement('div');this.status.className='edit-status';this.status.setAttribute('role','status');document.body.appendChild(this.status);
+    let to;const show=()=>{clearTimeout(to);t.classList.add('show')},hide=()=>{to=setTimeout(()=>{if(!this.on)t.classList.remove('show')},400)};
+    z.onmouseenter=show;z.onmouseleave=hide;t.onmouseenter=show;t.onmouseleave=hide;
+    t.onclick=()=>this.toggle();z.onclick=()=>this.toggle();
+    document.addEventListener('keydown',e=>{
+      if((e.key==='e'||e.key==='E')&&!e.target.isContentEditable&&!/INPUT|TEXTAREA/.test(e.target.tagName)&&!e.metaKey&&!e.ctrlKey)this.toggle();
+      if(e.key==='Escape'&&this.on){e.preventDefault();this.toggle()}
+      if((e.metaKey||e.ctrlKey)&&e.key==='s'){e.preventDefault();this.download()}
+    });
+    document.addEventListener('input',e=>{if(this.on&&e.target.closest&&e.target.closest('[data-eid]'))this.queue()});
+    addEventListener('beforeunload',e=>{if(this.timer){this.flush();e.preventDefault()}});
+  }
+  say(msg){this.status.textContent=msg}
+  /* only b/strong/i/em/br/span/small with class attributes survive */
+  clean(html){
+    const t=document.createElement('template');t.innerHTML=html;const ok=['B','STRONG','I','EM','BR','SPAN','SMALL'];
+    let bad;while((bad=[...t.content.querySelectorAll('*')].find(e=>!ok.includes(e.tagName))))bad.replaceWith(...bad.childNodes);
+    t.content.querySelectorAll('*').forEach(e=>[...e.attributes].forEach(a=>{if(a.name!=='class')e.removeAttribute(a.name)}));
+    return t.innerHTML;
+  }
+  async load(){
+    try{
+      const r=await fetch(this.api,{cache:'no-store'});if(!r.ok)return;
+      const d=await r.json();const items=d.items||{};
+      if(d.build&&this.build&&d.build!==this.build)return; // saved on another page version
+      Object.entries(items).forEach(([k,v])=>{const el=this.map.get(k);if(el&&typeof v==='string')el.innerHTML=this.clean(v)});
+    }catch(e){/* opened as a local file: no cloud edits */}
+  }
+  async login(){
+    for(let n=0;n<3;n++){
+      const pw=prompt(n?'密碼不對，請再輸入一次：':'請輸入編輯密碼：');if(pw===null)return false;
+      try{
+        const r=await fetch(this.api,{method:'POST',headers:{'x-edit-password':pw}});
+        if(r.ok){this.pw=pw;try{sessionStorage.setItem('edit-pw',pw)}catch(e){}return true}
+        if(r.status!==401){alert('無法連線到雲端存檔（只有部署後的網站能存檔）。');return false}
+      }catch(e){alert('無法連線到雲端存檔（只有部署後的網站能存檔）。');return false}
+    }
+    return false;
+  }
+  async toggle(){
+    this.on=!this.on;document.body.classList.toggle('editing',this.on);
+    document.getElementById('editToggle').classList.toggle('active',this.on);
+    this.map.forEach(el=>{if(this.on)el.setAttribute('contenteditable','true');else el.removeAttribute('contenteditable')});
+    if(this.on)this.say('編輯中 · Esc 離開');
+    else if(this.timer)this.flush();
+  }
+  queue(){this.say('尚未儲存…');clearTimeout(this.timer);this.timer=setTimeout(()=>this.flush(),1000)}
+  async flush(){
+    clearTimeout(this.timer);this.timer=null;
+    if(await this.stale()){this.say('此頁已更新，請重新整理後再編輯');if(this.on)this.toggle();return}
+    const items={};this.map.forEach((el,k)=>{const h=this.clean(el.innerHTML);if(h!==this.clean(this.orig.get(k)))items[k]=h});
+    this.say('儲存中…');
+    try{
+      const r=await fetch(this.api,{method:'PUT',keepalive:true,headers:{'content-type':'application/json','x-edit-password':this.pw||''},body:JSON.stringify({items,build:this.build})});
+      if(r.status===401){this.pw=null;try{sessionStorage.removeItem('edit-pw')}catch(e){}this.say('密碼失效，請重新進入編輯');return}
+      if(!r.ok)throw 0;
+      const t=new Date();this.say('已儲存 '+t.toTimeString().slice(0,5));
+    }catch(e){this.say('儲存失敗，請稍後再改一下重試')}
+  }
+  /* true when the deployed page is a newer version than this tab */
+  async stale(){
+    if(!this.build)return false;
+    try{
+      const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});if(!r.ok)return false;
+      const m=(await r.text()).match(/<meta name="build" content="([^"]+)"/);
+      return !!m&&m[1]!==this.build;
+    }catch(e){return false}
+  }
+  download(){
+    if(this.on)this.toggle();
+    const c=document.documentElement.cloneNode(true);
+    c.querySelectorAll('.glitch i,.qr b,.edit-status').forEach(n=>n.remove());
+    c.querySelectorAll('.slide').forEach(s=>s.classList.remove('active','visible'));
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(new Blob(['<!DOCTYPE html>\n'+c.outerHTML],{type:'text/html'}));
+    a.download=decodeURIComponent(location.pathname.split('/').pop()||'page.html');a.click();
+  }
+}
+const editor=new Editor();
+</script>
+</body>
+</html>
