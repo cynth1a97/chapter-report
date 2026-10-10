@@ -192,7 +192,7 @@ revealCheck();fromHash();
    so every visitor sees the latest text.
    · E key, or hover the top-left corner and click EDIT (detail pages: the 編輯 button in the top bar)
    · Anyone can edit (no password); the server keeps the last 30 versions for rollback
-   · Each change autosaves about 1 s after you stop typing
+   · A change is saved 5 s after you stop typing, or as soon as you click elsewhere
    · Esc (or the EDIT button) leaves edit mode; Cmd/Ctrl+S downloads a backup copy
    <body data-page="slides|detail"> decides which document is stored.
    <meta name="build"> (written by stamp.py) ties saved edits to one page version:
@@ -204,6 +204,8 @@ class Editor{
     this.api='/api/edits?page='+encodeURIComponent(this.page);
     this.on=false;this.timer=null;this.pw=null;
     this.build=(document.querySelector('meta[name=build]')||{}).content||'';
+    /* anonymous id for this browser, so the server keeps one backup per editing session */
+    try{this.who=localStorage.getItem('edit-who')||Math.random().toString(36).slice(2,12);localStorage.setItem('edit-who',this.who)}catch(e){this.who='anon'}
     try{this.pw=sessionStorage.getItem('edit-pw')}catch(e){}
     this.collect();
     this.ui();
@@ -254,6 +256,7 @@ body[data-page=detail] .edit-status{top:auto;bottom:22px}
       if((e.metaKey||e.ctrlKey)&&e.key==='s'){e.preventDefault();this.download()}
     });
     document.addEventListener('input',e=>{if(this.on&&e.target.closest&&e.target.closest('[data-eid]'))this.queue()});
+    document.addEventListener('focusout',e=>{if(this.on&&this.timer&&e.target.closest&&e.target.closest('[data-eid]'))this.flush()});
     addEventListener('beforeunload',e=>{if(this.timer){this.flush();e.preventDefault()}});
   }
   say(msg){this.status.textContent=msg}
@@ -290,14 +293,14 @@ body[data-page=detail] .edit-status{top:auto;bottom:22px}
     if(this.on)this.say('編輯中 · Esc 離開');
     else if(this.timer)this.flush();
   }
-  queue(){this.say('尚未儲存…');clearTimeout(this.timer);this.timer=setTimeout(()=>this.flush(),1000)}
+  queue(){this.say('尚未儲存…');clearTimeout(this.timer);this.timer=setTimeout(()=>this.flush(),5000)}
   async flush(){
     clearTimeout(this.timer);this.timer=null;
     if(await this.stale()){this.say('此頁已更新，請重新整理後再編輯');if(this.on)this.toggle();return}
     const items={};this.map.forEach((el,k)=>{const h=this.clean(el.innerHTML);if(h!==this.clean(this.orig.get(k)))items[k]=h});
     this.say('儲存中…');
     try{
-      const r=await fetch(this.api,{method:'PUT',keepalive:true,headers:{'content-type':'application/json','x-edit-password':this.pw||''},body:JSON.stringify({items,build:this.build})});
+      const r=await fetch(this.api,{method:'PUT',keepalive:true,headers:{'content-type':'application/json','x-edit-password':this.pw||''},body:JSON.stringify({items,build:this.build,who:this.who})});
       if(r.status===401){this.pw=null;try{sessionStorage.removeItem('edit-pw')}catch(e){}this.say('密碼失效，請重新進入編輯');return}
       if(!r.ok)throw 0;
       const t=new Date();this.say('已儲存 '+t.toTimeString().slice(0,5));

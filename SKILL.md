@@ -117,7 +117,7 @@ wrangler pages deploy --branch main
 
 Verify `/`, `/slides`, `/detail` and `/api/edits?page=slides` with curl.
 
-How editing works (tell the user): press **E** (or 編輯) on the live site, click any text, it autosaves after ~1 s and everyone sees it. Each save keeps the previous version (last 30) for rollback. Edits are stored by position ("slide N : element M") on top of the HTML.
+How editing works (tell the user): press **E** (or 編輯) on the live site, click any text; it saves 5 s after typing stops (or when you click elsewhere) and everyone sees it. A backup of the previous version is kept once per editing session (per browser, at most every 30 min; last 30 backups) for rollback. Edits are unlimited; the only cap is Cloudflare's free KV quota (~1,000 writes/day per account, ≈ one write per save). Edits are stored by position ("slide N : element M") on top of the HTML.
 
 **Before ANY layout change** (adding/removing slides, columns or sections):
 1. `curl <site>/api/edits?page=slides` (and `detail`) — read the online edits and map each key to its element on the live page

@@ -2,13 +2,16 @@
 // GET  /api/edits?page=slides|detail  → { items: { "group:index": "<html>" } }   (public)
 // POST /api/edits?page=...            → 200 if the x-edit-password header is right
 // PUT  /api/edits?page=...            → replace the stored edits (open to anyone)
-//      body { items, build } — build = the page version the edits belong to
-// Every PUT first copies the previous document into <page>:history (last 30) for rollback.
+//      body { items, build, who } — build = page version, who = anonymous browser id
+// Backups: before overwriting, the previous document is copied into <page>:history (last 30),
+// but only once per editing session — when a different browser saves, or the last backup is
+// older than SESSION_MS. Consecutive saves by the same person cost one KV write each.
 // Bindings: KV namespace EDITS, secret EDIT_PASSWORD (only used by POST now).
 
 const PAGES = ['slides', 'detail'];
 const MAX_BYTES = 400_000;
 const HISTORY = 30;
+const SESSION_MS = 30 * 60 * 1000; // a new backup at most every 30 min per person
 
 const json = (body, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -48,9 +51,9 @@ export async function onRequestPut({ request, env }) {
   const text = await request.text();
   if (text.length > MAX_BYTES) return json({ error: 'too large' }, 413);
 
-  let items, build;
+  let items, build, who;
   try {
-    ({ items, build = '' } = JSON.parse(text));
+    ({ items, build = '', who = '' } = JSON.parse(text));
   } catch {
     return json({ error: 'bad json' }, 400);
   }
@@ -60,15 +63,21 @@ export async function onRequestPut({ request, env }) {
   }
 
   if (typeof build !== 'string' || !/^[\w-]{1,40}$/.test(build)) return json({ error: 'bad build' }, 400);
+  if (typeof who !== 'string' || !/^[\w-]{0,40}$/.test(who)) return json({ error: 'bad who' }, 400);
 
-  const previous = await env.EDITS.get(page);
-  if (previous) {
+  const now = Date.now();
+  const raw = await env.EDITS.get(page);
+  const previous = raw ? JSON.parse(raw) : null;
+  let backedUpAt = previous?.backedUpAt || 0;
+  const newSession = previous && (previous.who !== who || now - backedUpAt > SESSION_MS);
+  if (newSession) {
     const history = JSON.parse((await env.EDITS.get(page + ':history')) || '[]');
-    history.unshift(JSON.parse(previous));
+    history.unshift(previous);
     await env.EDITS.put(page + ':history', JSON.stringify(history.slice(0, HISTORY)));
+    backedUpAt = now;
   }
 
-  const savedAt = new Date().toISOString();
-  await env.EDITS.put(page, JSON.stringify({ items, build, savedAt }));
+  const savedAt = new Date(now).toISOString();
+  await env.EDITS.put(page, JSON.stringify({ items, build, who, savedAt, backedUpAt: backedUpAt || now }));
   return json({ ok: true, savedAt });
 }
